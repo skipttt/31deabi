@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego para Abi</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: yellow;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        #gameMessage {
+            font-size: 18px;
+            color: cyan;
+            margin-bottom: 20px;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background-color: darkblue;
+            border: 3px solid white;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .star {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, yellow, orange);
+            border-radius: 50%;
+            box-shadow: 0 0 10px yellow;
+            animation: twinkle 1s infinite alternate ease-in-out;
+            cursor: pointer;
+        }
+
+        #score {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        #record {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: lightgreen;
+        }
+
+        #timer {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 36px; 
+        color: white;
+        background: darkblue;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px blue;
+        border: 3px solid yellow; 
+        }
+
+        #startButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #startButton:hover {
+            background-color: darkgreen;
+        }
+
+        @keyframes twinkle {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Hoooolaaaa Abiiii! <br> Programe un pequeño juego para ti, espero te guste jsjsjs ❤️ ⭐</h1>
+    <div id="gameMessage">Tienes que hacer clic en tantas estrellas como puedas antes de que termine el tiempooo.</div>
+    <div id="gameArea"></div>
+    <h2 id="score">Puntuación: 0</h2>
+    <div id="record">Récord: 0</div>
+    <div id="timer">20</div>
+    <button id="startButton">Iniciar Juego</button>
+
+    <script>
+        const gameArea = document.getElementById('gameArea');
+        const startButton = document.getElementById('startButton');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const recordDisplay = document.getElementById('record');
+
+        let score = 0;
+        let gameActive = false;
+        let countdown;
+        let record = 0;
+
+        function startGame() {
+            score = 0;
+            gameActive = true;
+            scoreDisplay.textContent = `Puntuación: ${score}`;
+            startButton.disabled = true;
+            timerDisplay.textContent = 20; 
+            spawnStars();
+
+            let timeLeft = 20;
+            countdown = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(countdown);
+            gameActive = false;
+            alert(`CHAAAALE, se te acabo el tiempooo abiii, tu puntuacion final es: ${score}`);
+            startButton.disabled = false;
+            clearStars();
+
+            if (score > record) {
+                record = score;
+                recordDisplay.textContent = `Récord: ${record}`;
+            }
+        }
+
+
+        function spawnStars() {
+            if (!gameActive) return;
+
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * (gameArea.clientWidth - 30) + 'px';
+            star.style.top = Math.random() * (gameArea.clientHeight - 30) + 'px';
+
+            star.addEventListener('click', () => {
+                if (gameActive) {
+                    score++;
+                    scoreDisplay.textContent = `Puntuación: ${score}`;
+                    gameArea.removeChild(star);
+                }
+            });
+
+            gameArea.appendChild(star);
+
+          
+            setTimeout(spawnStars, 500);
+            setTimeout(() => {
+                if (gameArea.contains(star)) {
+                    gameArea.removeChild(star);
+                }
+            }, 3000); 
+        }
+
+        function clearStars() {
+            gameArea.innerHTML = '';
+        }
+
+        startButton.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
